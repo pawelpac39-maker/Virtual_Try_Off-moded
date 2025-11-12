@@ -30,21 +30,13 @@ TEMU-VTOFF is a state-of-the-art toolkit for virtual try-off and fashion image u
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/TEMU-VTOFF.git
-   cd TEMU-VTOFF
+   git clone https://github.com/pawelpac39-maker/Virtual_Try_Off-moded
+   cd Virtual_Try_Off-moded
+   uv venv
+   uv pip install -r requirements.txt
    ```
 
-2. **Install dependencies:**
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **(Optional) Setup virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
 
 ---
 

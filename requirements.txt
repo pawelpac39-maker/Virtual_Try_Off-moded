@@ -36,3 +36,5 @@ tqdm
 qwen_vl_utils
 numpy
 gdown
+mediapipe
+opencv-python

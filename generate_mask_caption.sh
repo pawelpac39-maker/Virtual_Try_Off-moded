@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Script to process all input images with segmentation and captioning
+# First classifies clothing type, then processes with appropriate category
 
 # Set the input directory
 INPUT_DIR="INPUT"
@@ -17,6 +18,19 @@ if [ ! -f ".venv/bin/python" ]; then
     exit 1
 fi
 
+echo "================================================"
+echo "Step 0: Classifying clothing categories..."
+echo "================================================"
+
+# Run category recognition to rename files with _U or _L postfix
+.venv/bin/python precompute_utils/recognize_categories.py --input_dir "$INPUT_DIR"
+
+if [ $? -ne 0 ]; then
+    echo "Warning: Category classification had some errors, continuing..."
+fi
+
+echo ""
+
 # Process each .jpg file in INPUT directory (excluding mask and caption files)
 for img_file in "$INPUT_DIR"/*.jpg; do
     # Skip if no jpg files found
@@ -30,8 +44,19 @@ for img_file in "$INPUT_DIR"/*.jpg; do
         continue
     fi
     
+    # Determine category from filename postfix
+    if [[ "$filename" == *"_U" ]]; then
+        category="upper_body"
+    elif [[ "$filename" == *"_L" ]]; then
+        category="lower_body"
+    else
+        # Default to upper_body if no postfix found
+        category="upper_body"
+        echo "Warning: No category postfix found for $filename, using upper_body as default"
+    fi
+    
     echo "================================================"
-    echo "Processing: $img_file"
+    echo "Processing: $img_file (Category: $category)"
     echo "================================================"
     
     # Step 1: Segmentation - generate binary and fine masks
@@ -40,7 +65,7 @@ for img_file in "$INPUT_DIR"/*.jpg; do
 from PIL import Image
 from SegCloth import segment_clothing
 img = Image.open('$img_file')
-binary_mask, fine_mask = segment_clothing(img, category='upper_body')
+binary_mask, fine_mask = segment_clothing(img, category='$category')
 binary_mask.save('$INPUT_DIR/${filename}_binary_mask.jpg')
 fine_mask.save('$INPUT_DIR/${filename}_fine_mask.jpg')
 "
@@ -58,7 +83,7 @@ fine_mask.save('$INPUT_DIR/${filename}_fine_mask.jpg')
         --pretrained_model_name_or_path Qwen/Qwen2.5-VL-3B-Instruct \
         --image_path "$img_file" \
         --output_path "$INPUT_DIR/${filename}_caption.txt" \
-        --image_category upper_body
+        --image_category "$category"
     
     if [ $? -eq 0 ]; then
         echo "✓ Captioning completed for $filename"
