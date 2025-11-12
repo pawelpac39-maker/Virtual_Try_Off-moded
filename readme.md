@@ -46,8 +46,8 @@ TEMU-VTOFF is a state-of-the-art toolkit for virtual try-off and fashion image u
 
 ```bash
 python inference.py \
-  --pretrained_model_name_or_path <path/to/model> \
-  --pretrained_model_name_or_path_sd3_tryoff <path/to/tryoff/model> \
+  --pretrained_model_name_or_path "stabilityai/stable-diffusion-3-medium-diffusers" \
+  --pretrained_model_name_or_path_sd3_tryoff "davidelobba/TEMU-VTOFF" \
   --example_image examples/example1.jpg \
   --output_dir outputs \
   --width 768 --height 1024 \
